@@ -4,6 +4,8 @@ import Colors
 import Components.VerticalNavSettings
 import Element exposing (..)
 import Element.Background as Background
+import Element.Border as Border
+import Element.Font as Font
 import Spa.Document exposing (Document)
 import Spa.Generated.Route exposing (Route)
 import Spa.Page as Page exposing (Page)

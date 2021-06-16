@@ -4,7 +4,10 @@ import Colors
 import Components.VerticalNavSettings
 import Element exposing (..)
 import Element.Background as Background
+import Element.Border as Border
 import Element.Font as Font
+import Element.Input as Input
+import Pages.Settings.Addons exposing (settingsToggleBlock)
 import Spa.Document exposing (Document)
 import Spa.Generated.Route exposing (Route)
 import Spa.Page as Page exposing (Page)
@@ -66,13 +69,30 @@ view : Model -> Document Msg
 view model =
     { title = "Settings.Web"
     , body =
-        [
-          row[]
-          [ column[](Components.VerticalNavSettings.view
-              model.route)
-          , column[][
-          el[width (fillPortion 1), Font.color (rgb255 18 178 231), Font.size 24, Font.light, paddingXY 5 1](text "General options")
-          ]
-          ]
+        [ row [ Element.height fill, Element.width fill]
+            [ column[Element.height fill, Element.width fill, scrollbarY](Components.VerticalNavSettings.view model.route)
+            , column [ Element.height fill, Element.width (fillPortion 5), spacingXY 5 7, Background.color Colors.white, padding 40 , Font.size 24, Font.light]
+                        [ el[ Font.color (rgb255 18 178 231), Font.size 24, Font.light, paddingEach {top = 0, bottom = 30, left = 0, right = 0}](text "General options")
+                        , el[ Font.color (rgb255 18 178 231), Font.size 24, Font.light, paddingEach {top = 0, bottom = 30, left = 0, right = 0}](text "List options")
+                        , settingsToggleBlock "Ignore article" "Ignore articles (terms such as 'The' and 'A') when sorting lists"
+                        , settingsToggleBlock "Album artists only" "When listing artists should we only see artists with albums or all artists found. Warning: turning this off can impact performance with large libraries"
+                        , settingsToggleBlock "Focus playlist on playing" "Automatically scroll the playlist to the current playing item. This happens whenever the playing item is changed"
+                        , el[ Font.color (rgb255 18 178 231), Font.size 24, Font.light, paddingEach {top = 0, bottom = 30, left = 0, right = 0}](text "Appearance")
+                        , settingsToggleBlock "Vibrant headers" "Use colourful headers for media pages"
+                        , settingsToggleBlock "Disable Thumbs Up" "Remove the thumbs up button from media. Note: you may also want to remove the menu item from the Main Nav"
+                        , settingsToggleBlock "Show device name" "Show the Kodi device name in the header of Chorus"
+                        , el[ Font.color (rgb255 18 178 231), Font.size 24, Font.light, paddingEach {top = 0, bottom = 30, left = 0, right = 0}](text "Advanced options")
+                        , settingsToggleBlock "Reverse proxy support" "Enable support of reverse proxying."
+                        , settingsToggleBlock "RefreshIgnore NFO" "Ignore local NFO files when manually refreshing media."
+                        , el[ Font.color (rgb255 18 178 231), Font.size 24, Font.light, paddingEach {top = 0, bottom = 30, left = 0, right = 0}](text "API Keys")
+                        , row[ width (px 800),Background.color Colors.headerBackground, paddingXY 20 25][
+                            Input.button[Background.color Colors.cerulean, Font.color Colors.white,paddingXY 30 8, Font.size 14, Border.rounded 2]{
+                              onPress = Nothing,
+                              label = text "SAVE"
+                              }
+                            ]
+                        , el[height (px 100)](text "")
+                        ]
+            ]
         ]
     }
