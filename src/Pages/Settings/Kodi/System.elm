@@ -73,32 +73,32 @@ view model =
             [ column [ Element.height fill, Element.width fill, scrollbarY ] (Components.VerticalNavSettings.view model.route)
             , column [ Element.height fill, Element.width (fillPortion 5), spacingXY 5 7, Background.color Colors.white, padding 40, Font.size 24, Font.light ]
                 [ el [ Font.color (rgb255 18 178 231), Font.size 24, Font.light, paddingEach { top = 0, bottom = 30, left = 0, right = 0 } ] (text "Display")
-                , settingsDropdownBlock "Monitor" ""
-                , settingsDropdownBlock "Display mode" "Changes the way this application is displayed on the selected screen. Either in a window or fullscreen."
-                , settingsDropdownBlock "Resolution" "Changes the resolution that the user interface is displayed in."
-                , settingsToggleBlock "Blanck other displays" "In a multi-screen configuration, the screens not displaying this application are blacked out."
-                , el [ Font.color (rgb255 18 178 231), Font.size 24, Font.light, paddingEach { top = 0, bottom = 30, left = 0, right = 0 } ] (text "Audio")
-                , settingsDropdownBlock "Audio output device" "Select the device to be used for playback of audio that has been decoded such as mp3."
-                , settingsDropdownBlock "Number of channels" ""
-                , settingsInputBlock "Volume control steps" "Set the number of volume control steps."
-                , settingsDropdownBlock "Play GUI sounds" "Configure how interface sounds are handled, such as menu navigation and important notifications."
-                , settingsInputBlock "GUI sounds" "Select or disable the sounds used in the user interface."
-                , el [ Font.color (rgb255 18 178 231), Font.size 24, Font.light, paddingEach { top = 0, bottom = 30, left = 0, right = 0 } ] (text "Internet access")
-                , settingsToggleBlock "User proxy server" "If your Internet connection uses a proxy server, configure it here."
-                , settingsDropdownBlock "Proxy type" "Configure which proxy type is used."
-                , settingsInputBlock "Server" "Configure the proxy server address."
-                , settingsInputBlock "Port" "Configure the proxy server port"
-                , settingsInputBlock "Username" "Configure the proxy server username."
-                , settingsInputBlock "Password" "Configure the proxy server passoword."
-                , settingsInputBlock "Internet connection bandwidth limitation" "If your Internet connection has limited bandwidth available, use this setting to keep bandwidth usage by this application within defined limits."
-                , el [ Font.color (rgb255 18 178 231), Font.size 24, Font.light, paddingEach { top = 0, bottom = 30, left = 0, right = 0 } ] (text "Power saving")
-                , settingsInputBlock "Put display to sleep when idle" "Turn off display when idle. Useful for TVs that turn off when there is no display signal detected"
-                , settingsToggleBlock "Try to wakeup remote servers on access" "Automatically send Wake-on-LAN to server(s) right before trying to access shared files or services."
-                , el [ Font.color (rgb255 18 178 231), Font.size 24, Font.light, paddingEach { top = 0, bottom = 30, left = 0, right = 0 } ] (text "Add-ons")
-                , settingsDropdownBlock "Updates" "Change how auto updating of add-ons are handled."
-                , settingsToggleBlock "Show notifications" "Show notification when an add-ons have been updated."
-                , settingsToggleBlock "Unknown sources" "Allow installation of add-ons unknown sources."
-                , settingsDropdownBlock "Update official add-ons from" "By default, add-ons from official repositories will be prevented from being auto-updated from private repositories. For cases such as updating from an add-ons beta repository this option can be switched to [Any repositories] (bear in mind this is a less secure option and enabling it could cause incompatibility and crashes)."
+                -- , settingsDropdownBlock "Monitor" ""
+                -- , settingsDropdownBlock "Display mode" "Changes the way this application is displayed on the selected screen. Either in a window or fullscreen."
+                -- , settingsDropdownBlock "Resolution" "Changes the resolution that the user interface is displayed in."
+                -- , settingsToggleBlock "Blanck other displays" "In a multi-screen configuration, the screens not displaying this application are blacked out."
+                -- , el [ Font.color (rgb255 18 178 231), Font.size 24, Font.light, paddingEach { top = 0, bottom = 30, left = 0, right = 0 } ] (text "Audio")
+                -- , settingsDropdownBlock "Audio output device" "Select the device to be used for playback of audio that has been decoded such as mp3."
+                -- , settingsDropdownBlock "Number of channels" ""
+                -- , settingsInputBlock "Volume control steps" "Set the number of volume control steps."
+                -- , settingsDropdownBlock "Play GUI sounds" "Configure how interface sounds are handled, such as menu navigation and important notifications."
+                -- , settingsInputBlock "GUI sounds" "Select or disable the sounds used in the user interface."
+                -- , el [ Font.color (rgb255 18 178 231), Font.size 24, Font.light, paddingEach { top = 0, bottom = 30, left = 0, right = 0 } ] (text "Internet access")
+                -- , settingsToggleBlock "User proxy server" "If your Internet connection uses a proxy server, configure it here."
+                -- , settingsDropdownBlock "Proxy type" "Configure which proxy type is used."
+                -- , settingsInputBlock "Server" "Configure the proxy server address."
+                -- , settingsInputBlock "Port" "Configure the proxy server port"
+                -- , settingsInputBlock "Username" "Configure the proxy server username."
+                -- , settingsInputBlock "Password" "Configure the proxy server passoword."
+                -- , settingsInputBlock "Internet connection bandwidth limitation" "If your Internet connection has limited bandwidth available, use this setting to keep bandwidth usage by this application within defined limits."
+                -- , el [ Font.color (rgb255 18 178 231), Font.size 24, Font.light, paddingEach { top = 0, bottom = 30, left = 0, right = 0 } ] (text "Power saving")
+                -- , settingsInputBlock "Put display to sleep when idle" "Turn off display when idle. Useful for TVs that turn off when there is no display signal detected"
+                -- , settingsToggleBlock "Try to wakeup remote servers on access" "Automatically send Wake-on-LAN to server(s) right before trying to access shared files or services."
+                -- , el [ Font.color (rgb255 18 178 231), Font.size 24, Font.light, paddingEach { top = 0, bottom = 30, left = 0, right = 0 } ] (text "Add-ons")
+                -- , settingsDropdownBlock "Updates" "Change how auto updating of add-ons are handled."
+                -- , settingsToggleBlock "Show notifications" "Show notification when an add-ons have been updated."
+                -- , settingsToggleBlock "Unknown sources" "Allow installation of add-ons unknown sources."
+                -- , settingsDropdownBlock "Update official add-ons from" "By default, add-ons from official repositories will be prevented from being auto-updated from private repositories. For cases such as updating from an add-ons beta repository this option can be switched to [Any repositories] (bear in mind this is a less secure option and enabling it could cause incompatibility and crashes)."
                 , el [ Font.color (rgb255 18 178 231), Font.size 24, Font.light, paddingEach { top = 0, bottom = 30, left = 0, right = 0 } ] (text "Logging")
                 , settingsToggleBlock "Enable debug logging" "Turn debug logging on or off. Useful for troubleshooting."
                 , settingsToggleBlock "Enable component-specific logging" "Enable verbose messages from additional libraries to be included in the debug log."

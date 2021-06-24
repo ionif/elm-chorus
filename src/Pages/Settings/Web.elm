@@ -6,6 +6,8 @@ import Components.VerticalNavSettings
 import Element exposing (..)
 import Element.Background as Background
 import Dropdown exposing (Dropdown, OutMsg(..), Placement(..))
+import Material.Icons as Filled
+import Material.Icons.Types as MITypes exposing (Coloring(..), Icon)
 import Element.Border as Border
 import Element.Font as Font
 import Element.Input as Input
@@ -50,9 +52,7 @@ init url =
       , languageSelected = ""
      }, Cmd.none )
 
-type alias Options =
-    { name : String
-    }
+
 
 langList : List Options
 langList =
@@ -63,10 +63,35 @@ langList =
 
 -- UPDATE
 
-
 type Msg
     = ReplaceMe
     | DropdownMsg (Dropdown.Msg Options)
+
+type alias Options =
+    { name : String
+    }
+
+
+
+settingsDropdownBlock : Dropdown Options -> String -> String -> String -> Element Msg
+settingsDropdownBlock languageDropdown languageSelected title description =
+    column [ paddingEach { top = 0, bottom = 30, left = 20, right = 20 } ]
+        [ row [ paddingEach { top = 0, bottom = 20, left = 0, right = 0 } ]
+            [ paragraph [ width (px 300), Font.size 14, Font.color (rgb255 3 3 3), Font.medium ] [ text title ]
+            , row [width (px 400), Font.size 14, Font.color (rgb255 3 3 3), Font.light, paddingXY 0 5] [
+              Dropdown.labelHidden (True, "nolabel") languageDropdown
+                |> Dropdown.menuAttributes [Background.color (rgb255 85 85 85), Font.color (rgb255 255 255 255)]
+                |> Dropdown.optionSelectedAttributes [Background.color (rgb255 117 117 117)]
+                |> Dropdown.inputAttributes [width (px 400), Font.alignLeft, Border.widthEach { top = 0, bottom = 1, left = 0, right = 0}, Border.rounded 0]
+                |> Dropdown.view DropdownMsg
+            , el [alignRight] (Element.html (Filled.expand_more 18 Inherit))
+            ]
+            ]
+        , row []
+            [ el [ width (px 300) ] (text "")
+            , paragraph [ width (px 400), Font.size 12, Font.color (rgb255 142 142 142) ] [ text description ]
+            ]
+        ]
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )

@@ -82,7 +82,7 @@ view model =
                 , settingsInputBlock "Username" "Define the web server username. Must be set when authentication is enabled."
                 , settingsInputBlock "Password" "Define the web server password. Must be set when authentication is enabled."
                 , settingsToggleBlock "Enable SSL" "Select between web interfaces installed via the add-on manager."
-                , settingsDropdownBlock "Web interface" "Select between web interfaces installed via the add-on manager."
+                -- , settingsDropdownBlock "Web interface" "Select between web interfaces installed via the add-on manager."
                 , settingsToggleBlock "Allow remote control from applications on this system" "Allow programs on this device to control this application via the JSON-RPC over WebSocket, JSON-RPC over TCP, or EventServer protocol, without authentication."
                 , settingsToggleBlock "Allow remote control from applications on other systems" "Allow programs on the network to control this application via the JSON-RPC over WebSocket, JSON-RPC over TCP, or EventServer protocol, without authentication. It allows anyone with access to the network to completely control this application and, therefore, this device. Never expose these interfaces to the Internet."
                 , el [ Font.color (rgb255 18 178 231), Font.size 24, Font.light, paddingEach { top = 0, bottom = 30, left = 0, right = 0 } ] (text "UPnP / DLNA")
