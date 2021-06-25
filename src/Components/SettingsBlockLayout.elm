@@ -38,7 +38,9 @@ settingsInputBlock title description =
             ]
         ]
 
-
+type alias Options =
+    { name : String
+    }
 
 
 settingsToggleBlock : String -> String -> Element msg
