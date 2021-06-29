@@ -149,6 +149,7 @@ init flags url key =
         , """{"jsonrpc": "2.0", "method": "Files.GetSources", "params": { "media": "music" }, "id": 1 }"""
         , """{"jsonrpc": "2.0", "method": "Player.SetShuffle", "params": { "playerid": 0, "shuffle": false }, "id": 1 }""" --set shuffle to false on init
         , """{"jsonrpc": "2.0", "method": "Player.SetRepeat", "params": { "playerid": 0, "repeat": "off" }, "id": 1 }""" --set repeat to off on init
+        , """{"jsonrpc": "2.0", "method": "Settings.GetSettings", "params": { "standard" }, "id": 1 }""" 
         ]
     )
 
