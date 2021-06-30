@@ -149,7 +149,7 @@ init flags url key =
         , """{"jsonrpc": "2.0", "method": "Files.GetSources", "params": { "media": "music" }, "id": 1 }"""
         , """{"jsonrpc": "2.0", "method": "Player.SetShuffle", "params": { "playerid": 0, "shuffle": false }, "id": 1 }""" --set shuffle to false on init
         , """{"jsonrpc": "2.0", "method": "Player.SetRepeat", "params": { "playerid": 0, "repeat": "off" }, "id": 1 }""" --set repeat to off on init
-        , """{"jsonrpc": "2.0", "method": "Settings.GetSettings", "params": { "standard" }, "id": 1 }""" 
+        , """{"jsonrpc": "2.0", "method": "Settings.GetSettings", "params": { "standard" }, "id": 1 }"""
         ]
     )
 
@@ -198,6 +198,7 @@ type Msg
     | ToggleRightSidebar
     | ToggleControlMenu
     | ToggleShowRightSidebarMenu
+    | ClearPlaylistMsg
     | ToggleLeftSidebarMusicHover
     | ToggleLeftSidebarMoviesHover
     | ToggleLeftSidebarPlaylistHover
@@ -496,6 +497,11 @@ update msg model =
             , Cmd.none
             )
 
+        ClearPlaylistMsg ->
+          ( model
+          , sendAction {- clear the queue -} """{"jsonrpc": "2.0", "id": 0, "method": "Playlist.Clear", "params": {"playlistid": 0}}"""
+          )
+
         SendTextToKodi ->
             ( model, Cmd.none )
 
@@ -625,6 +631,7 @@ view { page, toMsg } model =
             }
         , rightSidebarExtended = model.rightSidebarExtended
         , rightSidebarMsg = toMsg ToggleRightSidebar
+        , clearPlaylistMsg = toMsg ClearPlaylistMsg
         , connection = model.connection
         , windowHeight = model.windowHeight
         , searchChanged = SearchChanged >> toMsg
