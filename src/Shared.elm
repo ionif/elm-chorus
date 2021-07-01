@@ -19,6 +19,7 @@ import Browser.Navigation exposing (Key, pushUrl)
 import Components.Frame
 import Components.LayoutType exposing (DialogType(..))
 import Element exposing (..)
+import I18Next
 import Json.Decode as D
 import Json.Encode as E exposing (Value)
 import List.Extra exposing (unique)
@@ -28,8 +29,9 @@ import SingleSlider exposing (SingleSlider)
 import Spa.Document exposing (Document)
 import Spa.Generated.Route as Route exposing (Route)
 import Time
+import Translations
 import Url exposing (Url)
-import WSDecoder exposing (AlbumObj, ArtistObj, LeftSidebarMenuHover(..), Connection(..), FileObj, ItemDetails, LocalPlaylists, MovieObj, PType(..), ParamsResponse, PlayerObj(..), PlaylistObj, ResultResponse(..), SongObj, SourceObj, TvshowObj, localPlaylistDecoder, localPlaylistEncoder, paramsResponseDecoder, resultResponseDecoder)
+import WSDecoder exposing (AlbumObj, ArtistObj, Connection(..), FileObj, ItemDetails, LeftSidebarMenuHover(..), LocalPlaylists, MovieObj, PType(..), ParamsResponse, PlayerObj(..), PlaylistObj, ResultResponse(..), SongObj, SourceObj, TvshowObj, localPlaylistDecoder, localPlaylistEncoder, paramsResponseDecoder, resultResponseDecoder)
 
 
 
@@ -40,6 +42,7 @@ type alias Flags =
     { innerWidth : Int
     , innerHeight : Int
     , localPlaylists : Maybe String
+    , translations : E.Value
     }
 
 
@@ -74,6 +77,7 @@ type alias Model =
     , prepareDownloadPath : Maybe String
     , playlistName : String
     , playlists : LocalPlaylists
+    , translations : I18Next.Translations
     }
 
 
@@ -92,6 +96,9 @@ init flags url key =
 
                         Err _ ->
                             { localPlaylists = [] }
+
+        decodedTranslations =
+            D.decodeValue I18Next.translationsDecoder flags.translations |> Result.withDefault I18Next.initialTranslations
     in
     ( { flags = flags
       , url = url
@@ -137,6 +144,7 @@ init flags url key =
       , prepareDownloadPath = Nothing
       , playlistName = ""
       , playlists = decodedlocalPlaylists
+      , translations = decodedTranslations
       }
     , sendActions
         [ """{"jsonrpc": "2.0", "method": "AudioLibrary.GetSongs", "params": { "properties": [ "artist", "duration", "album", "track", "genre", "albumid" ] }, "id": "libSongs"}"""
@@ -485,11 +493,10 @@ update msg model =
             , Cmd.none
             )
 
-        ToggleLeftSidebarNotHover->
+        ToggleLeftSidebarNotHover ->
             ( { model | leftSidebarMenuHover = NoneHover }
             , Cmd.none
             )
-
 
         ToggleShowRightSidebarMenu ->
             ( { model | showRightSidebarMenu = not model.showRightSidebarMenu }
@@ -593,20 +600,29 @@ view { page, toMsg } model =
         , leftSidebarControl =
             { leftSidebarMenuHover = model.leftSidebarMenuHover
             , leftSidebarMusicHoverMsg = toMsg ToggleLeftSidebarMusicHover
+            , leftSidebarMusicTranslation = Translations.music model.translations
             , leftSidebarMoviesHoverMsg = toMsg ToggleLeftSidebarMoviesHover
+            , leftSidebarMoviesTranslation = Translations.movies model.translations
             , leftSidebarTVShowHoverMsg = toMsg ToggleLeftSidebarTVShowsHover
+            , leftSidebarTVShowTranslation = Translations.tvShows model.translations
             , leftSidebarAddonsHoverMsg = toMsg ToggleLeftSidebarAddonsHover
+            , leftSidebarAddonsTranslation = Translations.addOns model.translations
             , leftSidebarPlaylistHoverMsg = toMsg ToggleLeftSidebarPlaylistHover
+            , leftSidebarPlaylistTranslation = Translations.playlists model.translations
             , leftSidebarBrowserHoverMsg = toMsg ToggleLeftSidebarBrowserHover
+            , leftSidebarBrowserTranslation = Translations.browser model.translations
             , leftSidebarSettingsHoverMsg = toMsg ToggleLeftSidebarSettingsHover
+            , leftSidebarSettingsTranslation = Translations.settings model.translations
             , leftSidebarHelpHoverMsg = toMsg ToggleLeftSidebarHelpHover
+            , leftSidebarHelpTranslation = Translations.help model.translations
             , leftSidebarThumbsUpHoverMsg = toMsg ToggleLeftSidebarThumbsUpHover
+            , leftSidebarThumbsUpTranslation = Translations.thumbsUp model.translations
             , leftSidebarNotHoverMsg = toMsg ToggleLeftSidebarNotHover
             }
         , showRightSidebarMenu =
-          { showRightSidebarMenu = model.showRightSidebarMenu
-          , showRightSidebarMenuMsg = toMsg ToggleShowRightSidebarMenu
-          }
+            { showRightSidebarMenu = model.showRightSidebarMenu
+            , showRightSidebarMenuMsg = toMsg ToggleShowRightSidebarMenu
+            }
         , playerControl =
             { playPauseMsg = toMsg PlayPause
             , skipMsg = toMsg SkipForward

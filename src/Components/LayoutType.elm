@@ -1,8 +1,10 @@
-module Components.LayoutType exposing (DialogType(..), LeftSidebarControl, ShowRightSidebarMenu, ControlMenu, CurrentlyPlaying, LayoutType, PlayerControl, VolumeAndControls)
+module Components.LayoutType exposing (ControlMenu, CurrentlyPlaying, DialogType(..), LayoutType, LeftSidebarControl, PlayerControl, ShowRightSidebarMenu, VolumeAndControls)
 
 import Element exposing (Element)
+import Json.Decode exposing (string)
 import Spa.Document exposing (Document)
-import WSDecoder exposing (LeftSidebarMenuHover, Connection, ItemDetails)
+import WSDecoder exposing (Connection, ItemDetails, LeftSidebarMenuHover)
+
 
 type alias LayoutType msg =
     { page : Document msg
@@ -42,19 +44,30 @@ type alias VolumeAndControls msg =
     , volumeSlider : Element msg
     }
 
+
 type alias LeftSidebarControl msg =
     { leftSidebarMenuHover : LeftSidebarMenuHover
     , leftSidebarMusicHoverMsg : msg
+    , leftSidebarMusicTranslation : String
     , leftSidebarMoviesHoverMsg : msg
+    , leftSidebarMoviesTranslation : String
     , leftSidebarTVShowHoverMsg : msg
+    , leftSidebarTVShowTranslation : String
     , leftSidebarAddonsHoverMsg : msg
+    , leftSidebarAddonsTranslation : String
     , leftSidebarPlaylistHoverMsg : msg
+    , leftSidebarPlaylistTranslation : String
     , leftSidebarBrowserHoverMsg : msg
+    , leftSidebarBrowserTranslation : String
     , leftSidebarSettingsHoverMsg : msg
+    , leftSidebarSettingsTranslation : String
     , leftSidebarThumbsUpHoverMsg : msg
+    , leftSidebarThumbsUpTranslation : String
     , leftSidebarHelpHoverMsg : msg
+    , leftSidebarHelpTranslation : String
     , leftSidebarNotHoverMsg : msg
     }
+
 
 type alias ControlMenu msg =
     { controlMenu : Bool
@@ -64,10 +77,12 @@ type alias ControlMenu msg =
     , scanMusicLibraryMsg : msg
     }
 
+
 type alias ShowRightSidebarMenu msg =
     { showRightSidebarMenu : Bool
     , showRightSidebarMenuMsg : msg
     }
+
 
 type alias DialogBox msg =
     { showDialog : DialogType
@@ -77,4 +92,8 @@ type alias DialogBox msg =
     , playlistName : String
     }
 
-type DialogType = ConnectionDialog | TextInputDialog | None
+
+type DialogType
+    = ConnectionDialog
+    | TextInputDialog
+    | None
