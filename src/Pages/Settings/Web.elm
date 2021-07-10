@@ -15,6 +15,7 @@ import Spa.Document exposing (Document)
 import Spa.Generated.Route exposing (Route)
 import Spa.Page as Page exposing (Page)
 import Spa.Url as Url exposing (Url)
+import Shared
 
 
 page : Page Params Model Msg
