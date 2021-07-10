@@ -29,7 +29,7 @@ import Spa.Document exposing (Document)
 import Spa.Generated.Route as Route exposing (Route)
 import Time
 import Url exposing (Url)
-import WSDecoder exposing (SettingObj, AlbumObj, ArtistObj, Connection(..), FileObj, ItemDetails, LeftSidebarMenuHover(..), LocalPlaylists, MovieObj, PType(..), ParamsResponse, PlayerObj(..), PlaylistObj, ResultResponse(..), SongObj, SourceObj, TvshowObj, localPlaylistDecoder, localPlaylistEncoder, paramsResponseDecoder, resultResponseDecoder)
+import WSDecoder exposing (SettingsActionObj, SettingsAddonObj, SettingsBoolObj, SettingsIntObj , SettingsListObj , SettingsPathObj, AlbumObj, ArtistObj, Connection(..), FileObj, ItemDetails, LeftSidebarMenuHover(..), LocalPlaylists, MovieObj, PType(..), ParamsResponse, PlayerObj(..), PlaylistObj, ResultResponse(..), SongObj, SourceObj, TvshowObj, localPlaylistDecoder, localPlaylistEncoder, paramsResponseDecoder, resultResponseDecoder)
 
 
 
@@ -59,14 +59,12 @@ type alias Model =
     , repeat : RepeatType
     , artist_list : List ArtistObj
     , album_list : List AlbumObj
-    , settingList : List SettingObj
-    -- , settingsActionList : List SettingsActionObj
-    -- , settingsAddonList : List SettingsAddonObj
-    -- , settingsBoolList : List SettingsBoolObj
-    -- , settingsIntList  : List SettingsIntObj
-    -- , settingsListList  : List SettingsListObj
-    -- , settingsPathList : List SettingsPathObj
-    -- , settingsStringList : List SettingsStringObj
+    , settingsActionList : List SettingsActionObj
+    , settingsAddonList : List SettingsAddonObj
+    , settingsBoolList : List SettingsBoolObj
+    , settingsIntList  : List SettingsIntObj
+    , settingsListList  : List SettingsListObj
+    , settingsPathList : List SettingsPathObj
     , song_list : List SongObj
     , genre_list : List String
     , movie_list : List MovieObj
@@ -116,14 +114,12 @@ init flags url key =
       , repeat = Off
       , artist_list = []
       , album_list = []
-      , settingList = []
-    --   , settingsActionList = []
-    --     , settingsAddonList = []
-    --     , settingsBoolList = []
-    --     , settingsIntList  = []
-    --     , settingsListList  = []
-    --     , settingsPathList = []
-    --     , settingsStringList = []
+      , settingsActionList = []
+        , settingsAddonList = []
+        , settingsBoolList = []
+        , settingsIntList  = []
+        , settingsListList  = []
+        , settingsPathList = []
       , song_list = []
       , genre_list = []
       , movie_list = []
@@ -165,7 +161,7 @@ init flags url key =
         , """{"jsonrpc": "2.0", "method": "Files.GetSources", "params": { "media": "music" }, "id": 1 }"""
         , """{"jsonrpc": "2.0", "method": "Player.SetShuffle", "params": { "playerid": 0, "shuffle": false }, "id": 1 }""" --set shuffle to false on init
         , """{"jsonrpc": "2.0", "method": "Player.SetRepeat", "params": { "playerid": 0, "repeat": "off" }, "id": 1 }""" --set repeat to off on init
-        , """{"jsonrpc": "2.0", "method": "Settings.GetSettings", "params": {}, "id": "getSettings" }"""
+        , """{"jsonrpc": "2.0", "method": "Settings.GetSettings", "params": {}, "id": 1 }"""
         ]
     )
 
@@ -447,47 +443,36 @@ update msg model =
                     ( { model | file_list = filelist }
                     , Cmd.none
                     )
-                
-                ResultL setting_list ->
-                    
-                    ( { model | settingList = setting_list }
+
+                ResultL settingsList -> 
+                    ( { model | settingsActionList = settingsList }
                     , Cmd.none
                     )
 
-                -- ResultL settingsList -> 
-                --     ( { model | settingsActionList = settingsList }
-                --     , Cmd.none
-                --     )
+                ResultM settingsList ->
+                    ( { model | settingsAddonList = settingsList }
+                    , Cmd.none
+                    )
 
-                -- ResultM settingsList ->
-                --     ( { model | settingsAddonList = settingsList }
-                --     , Cmd.none
-                --     )
+                ResultN settingsList ->
+                    ( { model | settingsBoolList = settingsList }
+                    , Cmd.none
+                    ) 
 
-                -- ResultN settingsList ->
-                --     ( { model | settingsBoolList = settingsList }
-                --     , Cmd.none
-                --     ) 
+                ResultO settingsList ->
+                    ( { model | settingsIntList = settingsList }
+                    , Cmd.none
+                    )
 
-                -- ResultO settingsList ->
-                --     ( { model | settingsIntList = settingsList }
-                --     , Cmd.none
-                --     )
+                ResultP settingsList ->
+                    ( { model | settingsListList = settingsList }
+                    , Cmd.none
+                    )
 
-                -- ResultP settingsList ->
-                --     ( { model | settingsListList = settingsList }
-                --     , Cmd.none
-                --     )
-
-                -- ResultQ settingsList ->
-                --     ( { model | settingsPathList = settingsList }
-                --     , Cmd.none
-                --     )
-
-                -- ResultR settingsList ->
-                --     ( { model | settingsStringList = settingsList }
-                --     , Cmd.none
-                --     )
+                ResultQ settingsList ->
+                    ( { model | settingsPathList = settingsList }
+                    , Cmd.none
+                    )
 
         ToggleRightSidebar ->
             ( { model | rightSidebarExtended = not model.rightSidebarExtended }
@@ -644,10 +629,6 @@ view :
     -> Model
     -> { body : Document msg, header : Element msg, playerBar : Element msg, rightSidebar : Element msg, leftSidebar : Element msg, dialogBox : Element msg }
 view { page, toMsg } model =
-    -- let
-    --     _ = 
-    --         Debug.log "12345" (Debug.toString model.settingList)
-    -- in
     Components.Frame.layout
         { page = page
         , controlMenu =
