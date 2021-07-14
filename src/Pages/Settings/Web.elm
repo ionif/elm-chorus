@@ -306,7 +306,7 @@ view model =
             [ column [ Element.height fill, Element.width fill, scrollbarY ] (Components.VerticalNavSettings.view model.route)
             , column [ Element.height fill, Element.width (fillPortion 5), spacingXY 5 7, Background.color Colors.white, padding 40, Font.size 24, Font.light ]
                 [ el [ Font.color (rgb255 18 178 231), Font.size 24, Font.light, paddingEach { top = 0, bottom = 30, left = 0, right = 0 } ] (text "General options")
-                , el [] (text (Debug.toString model.settingsList))
+                -- , el [] (text (Debug.toString model.settingsList))
                 , settingsDropdownBlock model.languageDropdown LanguageDropdownMsg "Language" "Preffered language, need to refresh browser to take effect"
                 , settingsDropdownBlock model.defaultPlayerDropdown DefaultPlayerDropdownMsg "Default Player" "Which player to start with"
                 , settingsDropdownBlock  model.controlDropdown ControlDropdownMsg "Keyboard controls" "In Chorus, will your keyboard control Kodi, the browser or both."

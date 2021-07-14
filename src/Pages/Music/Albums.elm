@@ -91,8 +91,8 @@ view model =
         [ row [ Element.height fill, Element.width fill ]
             [ Components.VerticalNavMusic.view model.route
             , column [ Element.height fill, Element.width (fillPortion 6), paddingXY 0 0, spacingXY 5 7, Background.color Colors.background ]
-                [ text (Debug.toString model.settingsList)
-                , Components.SectionHeader.viewAlbums model.album_list
+                [ 
+                Components.SectionHeader.viewAlbums model.album_list
                 ]
             ]
         ]
