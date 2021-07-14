@@ -8,7 +8,6 @@ import { Elm } from '../src/Main.elm';
   
 // });
 
-
 var storedData = localStorage.getItem('kodiLocalPlaylists');
 
   var flags = {

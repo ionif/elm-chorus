@@ -11,19 +11,23 @@ import Material.Icons.Types as MITypes exposing (Coloring(..), Icon)
 import Element.Border as Border
 import Element.Font as Font
 import Element.Input as Input
+import Shared exposing (sendAction, sendActions)
 import Spa.Document exposing (Document)
 import Spa.Generated.Route exposing (Route)
 import Spa.Page as Page exposing (Page)
 import Spa.Url as Url exposing (Url)
+import WSDecoder exposing (SettingsBoolObj)
 
 
 page : Page Params Model Msg
 page =
-    Page.element
+    Page.application
         { init = init
         , update = update
         , view = view
         , subscriptions = subscriptions
+        , save = save
+        , load = load
         }
 
 
@@ -37,6 +41,7 @@ type alias Params =
 
 type alias Model =
     { route : Route
+    , settingsList :  List SettingsBoolObj
     , languageDropdown : Dropdown Options
     , languageSelected : String
     , defaultPlayerDropdown : Dropdown Options
@@ -49,10 +54,19 @@ type alias Model =
     , settingsLevelSelected : String
    }
 
+save : Model -> Shared.Model -> Shared.Model
+save model shared =
+    { shared | settingsBoolList = model.settingsList }
 
-init : Url Params -> ( Model, Cmd Msg )
-init url =
+
+load : Shared.Model -> Model -> ( Model, Cmd Msg )
+load shared model =
+    ( { model | settingsList = shared.settingsBoolList }, Cmd.none )
+
+init : Shared.Model -> Url Params -> ( Model, Cmd Msg )
+init shared url =
     ( { route = url.route
+      , settingsList = shared.settingsBoolList
       , languageDropdown =
             Dropdown.init
                 |> Dropdown.id "language"
@@ -78,7 +92,9 @@ init url =
                 |> Dropdown.id "settingsLevel"
                 |> Dropdown.optionsBy .name settingsLevelList
       , settingsLevelSelected = ""
-     }, Cmd.none )
+     }
+     , sendAction  """{"jsonrpc": "2.0", "method": "Settings.GetSettings", "params": {}, "id": 1 }"""
+      )
 
 
 
@@ -290,6 +306,7 @@ view model =
             [ column [ Element.height fill, Element.width fill, scrollbarY ] (Components.VerticalNavSettings.view model.route)
             , column [ Element.height fill, Element.width (fillPortion 5), spacingXY 5 7, Background.color Colors.white, padding 40, Font.size 24, Font.light ]
                 [ el [ Font.color (rgb255 18 178 231), Font.size 24, Font.light, paddingEach { top = 0, bottom = 30, left = 0, right = 0 } ] (text "General options")
+                , el [] (text (Debug.toString model.settingsList))
                 , settingsDropdownBlock model.languageDropdown LanguageDropdownMsg "Language" "Preffered language, need to refresh browser to take effect"
                 , settingsDropdownBlock model.defaultPlayerDropdown DefaultPlayerDropdownMsg "Default Player" "Which player to start with"
                 , settingsDropdownBlock  model.controlDropdown ControlDropdownMsg "Keyboard controls" "In Chorus, will your keyboard control Kodi, the browser or both."

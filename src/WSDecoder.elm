@@ -1,4 +1,4 @@
-module WSDecoder exposing (SettingsActionObj, SettingsAddonObj, SettingsBoolObj, SettingsIntObj , SettingsListObj , SettingsPathObj,AlbumObj, ArtistObj, Connection(..), FileObj, FileType(..), Item, ItemDetails, LeftSidebarMenuHover(..), LocalPlaylists, MovieObj, PType(..), ParamsResponse, Path, PlayerObj(..), PlaylistObj, ResultResponse(..), SongObj, SourceObj, TvshowObj, localPlaylistDecoder, localPlaylistEncoder, paramsResponseDecoder, prepareDownloadDecoder, resultResponseDecoder)
+module WSDecoder exposing (SettingsStringObj, SettingsActionObj, SettingsAddonObj, SettingsBoolObj, SettingsIntObj , SettingsListObj , SettingsPathObj,AlbumObj, ArtistObj, Connection(..), FileObj, FileType(..), Item, ItemDetails, LeftSidebarMenuHover(..), LocalPlaylists, MovieObj, PType(..), ParamsResponse, Path, PlayerObj(..), PlaylistObj, ResultResponse(..), SongObj, SourceObj, TvshowObj, localPlaylistDecoder, localPlaylistEncoder, paramsResponseDecoder, prepareDownloadDecoder, resultResponseDecoder)
 
 import Json.Decode as Decode exposing (Decoder, at, bool, float, int, list, maybe, string)
 import Json.Decode.Pipeline exposing (custom, optional, required)
@@ -170,6 +170,7 @@ type ResultResponse
     | ResultO (List SettingsIntObj)
     | ResultP (List SettingsListObj)
     | ResultQ (List SettingsPathObj)
+    | ResultR (List SettingsStringObj)
 
 
 
@@ -241,6 +242,7 @@ queryDecoder =
         , settingsIntQueryDecoder
         , settingsListQueryDecoder
         , settingsPathQueryDecoder
+        , settingsStringQueryDecoder
         ]
 
 settingsActionQueryDecoder : Decoder ResultResponse 
@@ -272,6 +274,11 @@ settingsPathQueryDecoder : Decoder ResultResponse
 settingsPathQueryDecoder = 
     Decode.succeed ResultQ
         |> custom (at [ "result", "settings" ] (list settingsPathDecoder))
+
+settingsStringQueryDecoder : Decoder ResultResponse 
+settingsStringQueryDecoder = 
+    Decode.succeed ResultR
+        |> custom (at [ "result", "settings" ] (list settingsStringDecoder))
 
 songQueryDecoder : Decoder ResultResponse
 songQueryDecoder =

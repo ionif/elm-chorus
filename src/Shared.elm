@@ -29,7 +29,8 @@ import Spa.Document exposing (Document)
 import Spa.Generated.Route as Route exposing (Route)
 import Time
 import Url exposing (Url)
-import WSDecoder exposing (SettingsActionObj, SettingsAddonObj, SettingsBoolObj, SettingsIntObj , SettingsListObj , SettingsPathObj, AlbumObj, ArtistObj, Connection(..), FileObj, ItemDetails, LeftSidebarMenuHover(..), LocalPlaylists, MovieObj, PType(..), ParamsResponse, PlayerObj(..), PlaylistObj, ResultResponse(..), SongObj, SourceObj, TvshowObj, localPlaylistDecoder, localPlaylistEncoder, paramsResponseDecoder, resultResponseDecoder)
+import WSDecoder exposing (SettingsStringObj, SettingsActionObj, SettingsAddonObj, SettingsBoolObj, SettingsIntObj , SettingsListObj , SettingsPathObj, AlbumObj, ArtistObj, Connection(..), FileObj, ItemDetails, LeftSidebarMenuHover(..), LocalPlaylists, MovieObj, PType(..), ParamsResponse, PlayerObj(..), PlaylistObj, ResultResponse(..), SongObj, SourceObj, TvshowObj, localPlaylistDecoder, localPlaylistEncoder, paramsResponseDecoder, resultResponseDecoder)
+
 
 
 
@@ -65,6 +66,7 @@ type alias Model =
     , settingsIntList  : List SettingsIntObj
     , settingsListList  : List SettingsListObj
     , settingsPathList : List SettingsPathObj
+    , settingsStringList : List SettingsStringObj
     , song_list : List SongObj
     , genre_list : List String
     , movie_list : List MovieObj
@@ -120,6 +122,7 @@ init flags url key =
         , settingsIntList  = []
         , settingsListList  = []
         , settingsPathList = []
+        , settingsStringList = []
       , song_list = []
       , genre_list = []
       , movie_list = []
@@ -471,6 +474,11 @@ update msg model =
 
                 ResultQ settingsList ->
                     ( { model | settingsPathList = settingsList }
+                    , Cmd.none
+                    )
+
+                ResultR settingsList ->
+                    ( { model | settingsStringList = settingsList }
                     , Cmd.none
                     )
 
