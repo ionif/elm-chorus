@@ -16,7 +16,7 @@ import Spa.Document exposing (Document)
 import Spa.Generated.Route exposing (Route)
 import Spa.Page as Page exposing (Page)
 import Spa.Url as Url exposing (Url)
-import WSDecoder exposing (SettingsBoolObj)
+import WSDecoder exposing (SettingsObj)
 
 
 page : Page Params Model Msg
@@ -41,7 +41,7 @@ type alias Params =
 
 type alias Model =
     { route : Route
-    , settingsList :  List SettingsBoolObj
+    , settingsList :  List SettingsObj
     , languageDropdown : Dropdown Options
     , languageSelected : String
     , defaultPlayerDropdown : Dropdown Options
@@ -56,17 +56,17 @@ type alias Model =
 
 save : Model -> Shared.Model -> Shared.Model
 save model shared =
-    { shared | settingsBoolList = model.settingsList }
+    { shared | settings_list = model.settingsList }
 
 
 load : Shared.Model -> Model -> ( Model, Cmd Msg )
 load shared model =
-    ( { model | settingsList = shared.settingsBoolList }, Cmd.none )
+    ( { model | settingsList = shared.settings_list }, Cmd.none )
 
 init : Shared.Model -> Url Params -> ( Model, Cmd Msg )
 init shared url =
     ( { route = url.route
-      , settingsList = shared.settingsBoolList
+      , settingsList = shared.settings_list
       , languageDropdown =
             Dropdown.init
                 |> Dropdown.id "language"

@@ -29,7 +29,8 @@ import Spa.Document exposing (Document)
 import Spa.Generated.Route as Route exposing (Route)
 import Time
 import Url exposing (Url)
-import WSDecoder exposing (SettingsStringObj, SettingsActionObj, SettingsAddonObj, SettingsBoolObj, SettingsIntObj , SettingsListObj , SettingsPathObj, AlbumObj, ArtistObj, Connection(..), FileObj, ItemDetails, LeftSidebarMenuHover(..), LocalPlaylists, MovieObj, PType(..), ParamsResponse, PlayerObj(..), PlaylistObj, ResultResponse(..), SongObj, SourceObj, TvshowObj, localPlaylistDecoder, localPlaylistEncoder, paramsResponseDecoder, resultResponseDecoder)
+import WSDecoder exposing (SettingsObj, AlbumObj, ArtistObj, Connection(..), FileObj, ItemDetails, LeftSidebarMenuHover(..), LocalPlaylists, MovieObj, PType(..), ParamsResponse, PlayerObj(..), PlaylistObj, ResultResponse(..), SongObj, SourceObj, TvshowObj, localPlaylistDecoder, localPlaylistEncoder, paramsResponseDecoder, resultResponseDecoder)
+import Material.Icons exposing (settings)
 
 
 
@@ -60,13 +61,14 @@ type alias Model =
     , repeat : RepeatType
     , artist_list : List ArtistObj
     , album_list : List AlbumObj
-    , settingsActionList : List SettingsActionObj
-    , settingsAddonList : List SettingsAddonObj
-    , settingsBoolList : List SettingsBoolObj
-    , settingsIntList  : List SettingsIntObj
-    , settingsListList  : List SettingsListObj
-    , settingsPathList : List SettingsPathObj
-    , settingsStringList : List SettingsStringObj
+    , settings_list : List SettingsObj
+    -- , settingsActionList : List SettingsActionObj
+    -- , settingsAddonList : List SettingsAddonObj
+    -- , settingsBoolList : List SettingsBoolObj
+    -- , settingsIntList  : List SettingsIntObj
+    -- , settingsListList  : List SettingsListObj
+    -- , settingsPathList : List SettingsPathObj
+    -- , settingsStringList : List SettingsStringObj
     , song_list : List SongObj
     , genre_list : List String
     , movie_list : List MovieObj
@@ -116,13 +118,14 @@ init flags url key =
       , repeat = Off
       , artist_list = []
       , album_list = []
-      , settingsActionList = []
-        , settingsAddonList = []
-        , settingsBoolList = []
-        , settingsIntList  = []
-        , settingsListList  = []
-        , settingsPathList = []
-        , settingsStringList = []
+      , settings_list = []
+    --   , settingsActionList = []
+    --     , settingsAddonList = []
+    --     , settingsBoolList = []
+    --     , settingsIntList  = []
+    --     , settingsListList  = []
+    --     , settingsPathList = []
+    --     , settingsStringList = []
       , song_list = []
       , genre_list = []
       , movie_list = []
@@ -448,39 +451,44 @@ update msg model =
                     )
 
                 ResultL settingsList -> 
-                    ( { model | settingsActionList = settingsList }
+                    ( { model | settings_list = settingsList }
                     , Cmd.none
                     )
 
-                ResultM settingsList ->
-                    ( { model | settingsAddonList = settingsList }
-                    , Cmd.none
-                    )
+                -- ResultL settingsList -> 
+                --     ( { model | settingsActionList = settingsList }
+                --     , Cmd.none
+                --     )
 
-                ResultN settingsList ->
-                    ( { model | settingsBoolList = settingsList }
-                    , Cmd.none
-                    ) 
+                -- ResultM settingsList ->
+                --     ( { model | settingsAddonList = settingsList }
+                --     , Cmd.none
+                --     )
 
-                ResultO settingsList ->
-                    ( { model | settingsIntList = settingsList }
-                    , Cmd.none
-                    )
+                -- ResultN settingsList ->
+                --     ( { model | settingsBoolList = settingsList }
+                --     , Cmd.none
+                --     ) 
 
-                ResultP settingsList ->
-                    ( { model | settingsListList = settingsList }
-                    , Cmd.none
-                    )
+                -- ResultO settingsList ->
+                --     ( { model | settingsIntList = settingsList }
+                --     , Cmd.none
+                --     )
 
-                ResultQ settingsList ->
-                    ( { model | settingsPathList = settingsList }
-                    , Cmd.none
-                    )
+                -- ResultP settingsList ->
+                --     ( { model | settingsListList = settingsList }
+                --     , Cmd.none
+                --     )
 
-                ResultR settingsList ->
-                    ( { model | settingsStringList = settingsList }
-                    , Cmd.none
-                    )
+                -- ResultQ settingsList ->
+                --     ( { model | settingsPathList = settingsList }
+                --     , Cmd.none
+                --     )
+
+                -- ResultR settingsList ->
+                --     ( { model | settingsStringList = settingsList }
+                --     , Cmd.none
+                --     )
 
         ToggleRightSidebar ->
             ( { model | rightSidebarExtended = not model.rightSidebarExtended }
