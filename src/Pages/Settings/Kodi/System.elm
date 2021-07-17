@@ -15,6 +15,8 @@ import Spa.Document exposing (Document)
 import Spa.Generated.Route exposing (Route)
 import Spa.Page as Page exposing (Page)
 import Spa.Url as Url exposing (Url)
+import Widget.Material as Material
+import Widget
 
 
 page : Page Params Model Msg
@@ -55,6 +57,15 @@ type alias Model =
     , updateSelected : String
     , officialDropdown : Dropdown Options
     , officialSelected : String
+    , blankToggle : Bool 
+    , proxyToggle : Bool 
+    , wakeupToggle : Bool 
+    , notifToggle : Bool 
+    , sourcesToggle : Bool 
+    , debugToggle : Bool 
+    , componentToggle : Bool 
+    , eventToggle : Bool 
+    , notifLoggingToggle : Bool
   }
 
 
@@ -106,6 +117,15 @@ init url =
                 |> Dropdown.id "official"
                 |> Dropdown.optionsBy .name officialList
       , officialSelected = ""
+      , blankToggle = True 
+    , proxyToggle = True 
+    , wakeupToggle = True
+    , notifToggle = True 
+    , sourcesToggle = True 
+    , debugToggle = True
+    , componentToggle = True 
+    , eventToggle = True 
+    , notifLoggingToggle = True
     }, Cmd.none )
 
 monitorList : List Options
@@ -205,6 +225,30 @@ settingsDropdownBlock dropdown msg title description =
 
 -- UPDATE
 
+settingsToggleBlock : Bool -> msg -> String -> String -> Element msg
+settingsToggleBlock isToggleActive toggleMsg title description =
+    let
+        descriptionBlock =
+            if description == "" then
+                Element.none
+
+            else
+                row []
+                    [ el [ width (px 300) ] (text "")
+                    , paragraph [ width (px 400), Font.size 12, Font.color (rgb255 142 142 142) ] [ text description ]
+                    ]
+    in
+    column [ paddingEach { top = 0, bottom = 30, left = 20, right = 20 } ]
+        [ row [ paddingEach { top = 0, bottom = 0, left = 0, right = 0 } ]
+            [ paragraph [ width (px 300), Font.size 14, Font.color (rgb255 3 3 3), Font.medium ] [ text title ]
+            , Widget.switch (Material.switch customPalette)
+                { description = ""
+                , onPress = Just toggleMsg
+                , active = isToggleActive
+                }
+            ]
+        , descriptionBlock
+        ]
 
 type Msg
     = ReplaceMe
@@ -217,11 +261,47 @@ type Msg
     | UpdateDropdownMsg (Dropdown.Msg Options)
     | OfficialDropdownMsg (Dropdown.Msg Options)
     | ProxyDropdownMsg (Dropdown.Msg Options)
+    | BlankToggleMsg 
+    | ProxyToggleMsg 
+    | WakeupToggleMsg
+    | NotifToggleMsg 
+    | SourcesToggleMsg 
+    | DebugToggleMsg
+    | ComponentToggleMsg 
+    | EventToggleMsg 
+    | NotifLoggingToggleMsg
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
+        BlankToggleMsg ->
+            ( {model | blankToggle = not model.blankToggle}, Cmd.none )
+ 
+        ProxyToggleMsg ->
+            ( {model | proxyToggle = not model.proxyToggle}, Cmd.none )
+ 
+        WakeupToggleMsg ->
+            ( {model | wakeupToggle = not model.wakeupToggle}, Cmd.none )
+
+        NotifToggleMsg ->
+            ( {model | notifToggle = not model.notifToggle}, Cmd.none )
+ 
+        SourcesToggleMsg ->
+            ( {model | sourcesToggle = not model.sourcesToggle}, Cmd.none )
+ 
+        DebugToggleMsg ->
+            ( {model | debugToggle = not model.debugToggle}, Cmd.none )
+
+        ComponentToggleMsg ->
+            ( {model | componentToggle = not model.componentToggle}, Cmd.none )
+ 
+        EventToggleMsg ->
+            ( {model | eventToggle = not model.eventToggle}, Cmd.none )
+ 
+        NotifLoggingToggleMsg ->
+            ( {model | notifLoggingToggle = not model.notifLoggingToggle}, Cmd.none )
+
         ReplaceMe ->
             ( model, Cmd.none )
 
@@ -435,7 +515,7 @@ view model =
                 , settingsDropdownBlock model.monitorDropdown MonitorDropdownMsg "Monitor" ""
                 , settingsDropdownBlock model.displayDropdown DisplayDropdownMsg "Display mode" "Changes the way this application is displayed on the selected screen. Either in a window or fullscreen."
                 , settingsDropdownBlock model.resolutionDropdown ResolutionDropdownMsg "Resolution" "Changes the resolution that the user interface is displayed in."
-                , settingsToggleBlock "Blanck other displays" "In a multi-screen configuration, the screens not displaying this application are blacked out."
+                , settingsToggleBlock model.blankToggle BlankToggleMsg "Blanck other displays" "In a multi-screen configuration, the screens not displaying this application are blacked out."
                 , el [ Font.color (rgb255 18 178 231), Font.size 24, Font.light, paddingEach { top = 0, bottom = 30, left = 0, right = 0 } ] (text "Audio")
                 , settingsDropdownBlock model.audioOutputDropdown AudioOutputDropdownMsg "Audio output device" "Select the device to be used for playback of audio that has been decoded such as mp3."
                 , settingsDropdownBlock model.channelNumberDropdown ChannelNumberDropdownMsg "Number of channels" ""
@@ -443,7 +523,7 @@ view model =
                 , settingsDropdownBlock model.playGUIDropdown PlayGUIDropdownMsg "Play GUI sounds" "Configure how interface sounds are handled, such as menu navigation and important notifications."
                 , settingsInputBlock "GUI sounds" "Select or disable the sounds used in the user interface."
                 , el [ Font.color (rgb255 18 178 231), Font.size 24, Font.light, paddingEach { top = 0, bottom = 30, left = 0, right = 0 } ] (text "Internet access")
-                , settingsToggleBlock "User proxy server" "If your Internet connection uses a proxy server, configure it here."
+                , settingsToggleBlock model.proxyToggle ProxyToggleMsg "User proxy server" "If your Internet connection uses a proxy server, configure it here."
                 , settingsDropdownBlock model.proxyDropdown ProxyDropdownMsg "Proxy type" "Configure which proxy type is used."
                 , settingsInputBlock "Server" "Configure the proxy server address."
                 , settingsInputBlock "Port" "Configure the proxy server port"
@@ -452,18 +532,18 @@ view model =
                 , settingsInputBlock "Internet connection bandwidth limitation" "If your Internet connection has limited bandwidth available, use this setting to keep bandwidth usage by this application within defined limits."
                 , el [ Font.color (rgb255 18 178 231), Font.size 24, Font.light, paddingEach { top = 0, bottom = 30, left = 0, right = 0 } ] (text "Power saving")
                 , settingsInputBlock "Put display to sleep when idle" "Turn off display when idle. Useful for TVs that turn off when there is no display signal detected"
-                , settingsToggleBlock "Try to wakeup remote servers on access" "Automatically send Wake-on-LAN to server(s) right before trying to access shared files or services."
+                , settingsToggleBlock model.wakeupToggle WakeupToggleMsg "Try to wakeup remote servers on access" "Automatically send Wake-on-LAN to server(s) right before trying to access shared files or services."
                 , el [ Font.color (rgb255 18 178 231), Font.size 24, Font.light, paddingEach { top = 0, bottom = 30, left = 0, right = 0 } ] (text "Add-ons")
                 , settingsDropdownBlock model.updateDropdown UpdateDropdownMsg "Updates" "Change how auto updating of add-ons are handled."
-                , settingsToggleBlock "Show notifications" "Show notification when an add-ons have been updated."
-                , settingsToggleBlock "Unknown sources" "Allow installation of add-ons unknown sources."
+                , settingsToggleBlock model.notifToggle NotifToggleMsg "Show notifications" "Show notification when an add-ons have been updated."
+                , settingsToggleBlock model.sourcesToggle SourcesToggleMsg "Unknown sources" "Allow installation of add-ons unknown sources."
                 , settingsDropdownBlock model.officialDropdown OfficialDropdownMsg "Update official add-ons from" "By default, add-ons from official repositories will be prevented from being auto-updated from private repositories. For cases such as updating from an add-ons beta repository this option can be switched to [Any repositories] (bear in mind this is a less secure option and enabling it could cause incompatibility and crashes)."
                 , el [ Font.color (rgb255 18 178 231), Font.size 24, Font.light, paddingEach { top = 0, bottom = 30, left = 0, right = 0 } ] (text "Logging")
-                , settingsToggleBlock "Enable debug logging" "Turn debug logging on or off. Useful for troubleshooting."
-                , settingsToggleBlock "Enable component-specific logging" "Enable verbose messages from additional libraries to be included in the debug log."
+                , settingsToggleBlock model.debugToggle DebugToggleMsg "Enable debug logging" "Turn debug logging on or off. Useful for troubleshooting."
+                , settingsToggleBlock model.componentToggle ComponentToggleMsg "Enable component-specific logging" "Enable verbose messages from additional libraries to be included in the debug log."
                 , settingsInputBlock "Screenshot folder" "Select the folder where screenshots should be saved in."
-                , settingsToggleBlock "Enable event logging" "Event logging allows to keep track of what has happened."
-                , settingsToggleBlock "Enable notification event logging" "Notification event describe regular processes and actions performed by the system or the user."
+                , settingsToggleBlock model.eventToggle EventToggleMsg "Enable event logging" "Event logging allows to keep track of what has happened."
+                , settingsToggleBlock model.notifLoggingToggle NotifLoggingToggleMsg "Enable notification event logging" "Notification event describe regular processes and actions performed by the system or the user."
                 , row [ width (px 800), Background.color Colors.headerBackground, paddingXY 20 25 ]
                     [ Input.button [ Background.color Colors.cerulean, Font.color Colors.white, paddingXY 30 8, Font.size 14, Border.rounded 2 ]
                         { onPress = Nothing

@@ -43,30 +43,6 @@ type alias Options =
     }
 
 
-settingsToggleBlock : String -> String -> Element msg
-settingsToggleBlock title description =
-    let
-        descriptionBlock =
-            if description == "" then
-                Element.none
-
-            else
-                row []
-                    [ el [ width (px 300) ] (text "")
-                    , paragraph [ width (px 400), Font.size 12, Font.color (rgb255 142 142 142) ] [ text description ]
-                    ]
-    in
-    column [ paddingEach { top = 0, bottom = 30, left = 20, right = 20 } ]
-        [ row [ paddingEach { top = 0, bottom = 0, left = 0, right = 0 } ]
-            [ paragraph [ width (px 300), Font.size 14, Font.color (rgb255 3 3 3), Font.medium ] [ text title ]
-            , Widget.switch (Material.switch customPalette)
-                { description = ""
-                , onPress = Nothing
-                , active = True
-                }
-            ]
-        , descriptionBlock
-        ]
 
 customPalette : Material.Palette
 customPalette =

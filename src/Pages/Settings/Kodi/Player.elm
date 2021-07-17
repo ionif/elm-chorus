@@ -15,6 +15,8 @@ import Spa.Document exposing (Document)
 import Spa.Generated.Route exposing (Route)
 import Spa.Page as Page exposing (Page)
 import Spa.Url as Url exposing (Url)
+import Widget.Material as Material
+import Widget
 
 
 page : Page Params Model Msg
@@ -59,6 +61,20 @@ type alias Model =
     , tvShowSelected : String
     , movieDropdown : Dropdown Options
     , movieSelected : String
+    , playbackToggle : Bool 
+    , nextSongToggle : Bool 
+    , queueSongToggle : Bool 
+    , crossfadeToggle : Bool 
+    , dvdToggle : Bool 
+    , audioCDToggle : Bool 
+    , zoomToggle : Bool 
+    , randomiseToggle : Bool 
+    , downscalingToggle : Bool 
+    , defaultToggle : Bool 
+    , parsingToggle : Bool 
+    , audioVisualToggle : Bool 
+    , audioHearToggle : Bool 
+    , subtitleHearToggle : Bool 
   }
 
 
@@ -120,6 +136,20 @@ init url =
                 |> Dropdown.id "movie"
                 |> Dropdown.optionsBy .name movieList
       , movieSelected = ""
+      , playbackToggle = True
+    , nextSongToggle = True 
+    , queueSongToggle = True 
+    , crossfadeToggle = True 
+    , dvdToggle = True
+    , audioCDToggle = True
+    , zoomToggle = True 
+    , randomiseToggle = True 
+    , downscalingToggle  = True
+    , defaultToggle = True
+    , parsingToggle = True
+    , audioVisualToggle = True 
+    , audioHearToggle = True 
+    , subtitleHearToggle = True
 
     }, Cmd.none )
 
@@ -142,6 +172,31 @@ settingsDropdownBlock dropdown msg title description =
             [ el [ width (px 300) ] (text "")
             , paragraph [ width (px 400), Font.size 12, Font.color (rgb255 142 142 142) ] [ text description ]
             ]
+        ]
+
+settingsToggleBlock : Bool -> msg -> String -> String -> Element msg
+settingsToggleBlock isToggleActive toggleMsg title description =
+    let
+        descriptionBlock =
+            if description == "" then
+                Element.none
+
+            else
+                row []
+                    [ el [ width (px 300) ] (text "")
+                    , paragraph [ width (px 400), Font.size 12, Font.color (rgb255 142 142 142) ] [ text description ]
+                    ]
+    in
+    column [ paddingEach { top = 0, bottom = 30, left = 20, right = 20 } ]
+        [ row [ paddingEach { top = 0, bottom = 0, left = 0, right = 0 } ]
+            [ paragraph [ width (px 300), Font.size 14, Font.color (rgb255 3 3 3), Font.medium ] [ text title ]
+            , Widget.switch (Material.switch customPalette)
+                { description = ""
+                , onPress = Just toggleMsg
+                , active = isToggleActive
+                }
+            ]
+        , descriptionBlock
         ]
 
 displayList : List Options
@@ -414,6 +469,20 @@ type Msg
     | CharacterDropdownMsg (Dropdown.Msg Options)
     | TvShowDropdownMsg (Dropdown.Msg Options)
     | MovieDropdownMsg (Dropdown.Msg Options)
+    | PlaybackToggleMsg
+    | NextSongToggleMsg 
+    | QueueSongToggleMsg
+    | CrossfadeToggleMsg 
+    | DvdToggleMsg
+    | AudioCDToggleMsg
+    | ZoomToggleMsg 
+    | RandomiseToggleMsg 
+    | DownscalingToggleMsg
+    | DefaultToggleMsg
+    | ParsingToggleMsg
+    | AudioVisualToggleMsg 
+    | AudioHearToggleMsg 
+    | SubtitleHearToggleMsg
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -421,6 +490,50 @@ update msg model =
     case msg of
         ReplaceMe ->
             ( model, Cmd.none )
+
+
+        PlaybackToggleMsg ->
+            ( {model | playbackToggle = not model.playbackToggle}, Cmd.none )
+
+        NextSongToggleMsg ->
+            ( {model | nextSongToggle = not model.nextSongToggle}, Cmd.none )
+ 
+        QueueSongToggleMsg ->
+            ( {model | queueSongToggle = not model.queueSongToggle}, Cmd.none )
+
+        CrossfadeToggleMsg ->
+            ( {model | crossfadeToggle = not model.crossfadeToggle}, Cmd.none )
+ 
+        DvdToggleMsg ->
+            ( {model | dvdToggle = not model.dvdToggle}, Cmd.none )
+
+        AudioCDToggleMsg ->
+            ( {model | audioCDToggle = not model.audioCDToggle}, Cmd.none )
+
+        ZoomToggleMsg ->
+            ( {model | zoomToggle = not model.zoomToggle}, Cmd.none )
+ 
+        RandomiseToggleMsg ->
+            ( {model | randomiseToggle = not model.randomiseToggle}, Cmd.none )
+ 
+        DownscalingToggleMsg ->
+            ( {model | downscalingToggle = not model.downscalingToggle}, Cmd.none )
+
+        DefaultToggleMsg ->
+            ( {model | defaultToggle = not model.defaultToggle}, Cmd.none )
+
+        ParsingToggleMsg ->
+            ( {model | parsingToggle = not model.parsingToggle}, Cmd.none )
+
+        AudioVisualToggleMsg ->
+            ( {model | audioVisualToggle = not model.audioVisualToggle}, Cmd.none )
+ 
+        AudioHearToggleMsg  ->
+            ( {model | audioHearToggle = not model.audioHearToggle}, Cmd.none )
+
+        SubtitleHearToggleMsg ->
+            ( {model | subtitleHearToggle = not model.subtitleHearToggle}, Cmd.none )
+
 
         DisplayDropdownMsg subMsg ->
             let
@@ -674,39 +787,39 @@ view model =
                 [ el [ Font.color (rgb255 18 178 231), Font.size 24, Font.light, paddingEach { top = 0, bottom = 30, left = 0, right = 0 } ] (text "Videos")
                 , settingsInputBlock "Skip delay" "Defines the time to wait for subsequent key presses before performing the skip. Only applies when using smart skipping (when using more than one skip step for a direction)."
                 , settingsDropdownBlock model.displayDropdown DisplayDropdownMsg "Adjust display refresh rate" "Allow the refresh rate of the display to be changed so that it best matches the video frame rate. This may yield smoother video playback."
-                , settingsToggleBlock "Sync playback to display" "Synchronise video and audio to the refresh rate of the monitor. VideoPlayer won't use passthrough audio in this case because resampling may be required."
+                , settingsToggleBlock model.playbackToggle PlaybackToggleMsg "Sync playback to display" "Synchronise video and audio to the refresh rate of the monitor. VideoPlayer won't use passthrough audio in this case because resampling may be required."
                 , el [ Font.color (rgb255 18 178 231), Font.size 24, Font.light, paddingEach { top = 0, bottom = 30, left = 0, right = 0 } ] (text "Music")
-                , settingsToggleBlock "Play next song automatically" "Automatically plays the next item in the current folder, for example in \"Files\" view after a track has been played, the next track in the same folder will automatically play."
-                , settingsToggleBlock "Queue songs on selection" "When songs are selected they are queued instead of playback starting immediately."
+                , settingsToggleBlock model.nextSongToggle NextSongToggleMsg "Play next song automatically" "Automatically plays the next item in the current folder, for example in \"Files\" view after a track has been played, the next track in the same folder will automatically play."
+                , settingsToggleBlock model.queueSongToggle QueueSongToggleMsg "Queue songs on selection" "When songs are selected they are queued instead of playback starting immediately."
                 , settingsInputBlock "Skip delay" "Defines the time to wait for subsequent key presses before performing the skip. Only applies when using smart skipping (when using more than one skip step for a direction)."
                 , settingsInputBlock "Crossfade between songs" "Smoothly fade from one audio track to the next. You can set the amount of overlap from 1-15 seconds."
-                , settingsToggleBlock "Crossfade between songs on the same album" "Allow crossfading to occur when both tracks are from the same album."
+                , settingsToggleBlock model.crossfadeToggle CrossfadeToggleMsg "Crossfade between songs on the same album" "Allow crossfading to occur when both tracks are from the same album."
                 , settingsDropdownBlock model.visualisationDropdown VisualisationDropdownMsg "Visualisation" "Select the visualisation that will be displayed while listening to music."
                 , el [ Font.color (rgb255 18 178 231), Font.size 24, Font.light, paddingEach { top = 0, bottom = 30, left = 0, right = 0 } ] (text "Discs")
-                , settingsToggleBlock "Play DVDs automaticaly" "Autorun DVD video when inserted in drive."
+                , settingsToggleBlock model.dvdToggle DvdToggleMsg "Play DVDs automaticaly" "Autorun DVD video when inserted in drive."
                 , settingsInputBlock "Forced DVD player region" "Force a region for DVD playback."
                 , settingsDropdownBlock model.regionCodeDropdown RegionCodeDropdownMsg "Blu-ray region Code" "Region A - Americas, East Asia and Southeast Asia. Region B - Africa, Middle East, Southwest Asia, Europe, Australia, New Zealand. Region C - Central Asia, mainland China, Mongolia, South Asia, Belarus, Russia, Ukraine, Kazakhstan."
                 , settingsDropdownBlock model.playbackDropdown PlaybackDropdownMsg "Blu-ray playback mode" "Specifies how Blu-rays should be opened / played back. Note: Some disc menus are not fully supported and may cause problems."
                 , settingsDropdownBlock model.insertDropdown InsertDropdownMsg "Audio CD insert action" "Autorun CDs when inserted in drive."
-                , settingsToggleBlock "Load audio CD information from online service" "Read the information belonging to an audio CD, like song title and artist, from the Internet database freedb.org."
+                , settingsToggleBlock model.audioCDToggle AudioCDToggleMsg "Load audio CD information from online service" "Read the information belonging to an audio CD, like song title and artist, from the Internet database freedb.org."
                 , el [ Font.color (rgb255 18 178 231), Font.size 24, Font.light, paddingEach { top = 0, bottom = 30, left = 0, right = 0 } ] (text "Pictures")
                 , settingsInputBlock "Amount of time to display each image" "Select the amount of time that each image is displayed in a slideshow."
-                , settingsToggleBlock "Use pan and zoom effects" "Images in a slideshow will pan and zoom while displayed."
-                , settingsToggleBlock "Randomise" "View slideshow images in a random order."
-                , settingsToggleBlock "High quality downscaling" "Enable high quality downscaling of pictures (uses more memory and has moderate performance impact)."
+                , settingsToggleBlock model.zoomToggle ZoomToggleMsg "Use pan and zoom effects" "Images in a slideshow will pan and zoom while displayed."
+                , settingsToggleBlock model.randomiseToggle RandomiseToggleMsg "Randomise" "View slideshow images in a random order."
+                , settingsToggleBlock model.downscalingToggle DownscalingToggleMsg "High quality downscaling" "Enable high quality downscaling of pictures (uses more memory and has moderate performance impact)."
                 , el [ Font.color (rgb255 18 178 231), Font.size 24, Font.light, paddingEach { top = 0, bottom = 30, left = 0, right = 0 } ] (text "Language")
                 , settingsDropdownBlock model.audioDropdown AudioDropdownMsg "Preffered audio language" "defaults to the selected audio language if more than one language is available."
-                , settingsToggleBlock "Prefer default audio streams" "If enabled, audio streams that are flagged as default (and match the preferred language) are preferred over audio streams with higher quality (number of channels, codec, ...)."
+                , settingsToggleBlock model.defaultToggle DefaultToggleMsg "Prefer default audio streams" "If enabled, audio streams that are flagged as default (and match the preferred language) are preferred over audio streams with higher quality (number of channels, codec, ...)."
                 , settingsDropdownBlock model.subtitleDropdown SubtitleDropdownMsg "Preffered subtitle language" "Defaults to the selected subtitle language if more than one language is available."
-                , settingsToggleBlock "Enable parsing for closed captions" "Enable to parse for CC in video stream. Puts slightly more load on the CPU"
+                , settingsToggleBlock model.parsingToggle ParsingToggleMsg "Enable parsing for closed captions" "Enable to parse for CC in video stream. Puts slightly more load on the CPU"
                 , settingsDropdownBlock model.fontDropdown FontDropdownMsg "Font to use for text subtitles" "Set the font type to be used for text based (usually downloaded) subtitles."
                 , settingsDropdownBlock model.characterDropdown CharacterDropdownMsg "Character set" "Set the font character set to be used for subtitles."
                 , settingsDropdownBlock model.tvShowDropdown TvShowDropdownMsg "Default TV show service" "Select the service that will be used as default to search for TV show subtitles."
                 , settingsDropdownBlock model.movieDropdown MovieDropdownMsg "Default movie service" "Select the service that will be used as default to search for movies subtitles."
                 , el [ Font.color (rgb255 18 178 231), Font.size 24, Font.light, paddingEach { top = 0, bottom = 30, left = 0, right = 0 } ] (text "Accessibility")
-                , settingsToggleBlock "Prefer audio stream for the visually impaired" "Prefer the audio stream for the visually impaired to other audio streams of the same language"
-                , settingsToggleBlock "Prefer audio stream for the hearing impaired" "Prefer the audio stream for the hearing impaired to other audio streams of the same language"
-                , settingsToggleBlock "Prefer subtitles for the visually impaired" "Prefer the subtitle stream for the hearing impaired to other subtitle streams of the same language"
+                , settingsToggleBlock model.audioVisualToggle AudioVisualToggleMsg "Prefer audio stream for the visually impaired" "Prefer the audio stream for the visually impaired to other audio streams of the same language"
+                , settingsToggleBlock model.audioHearToggle AudioHearToggleMsg "Prefer audio stream for the hearing impaired" "Prefer the audio stream for the hearing impaired to other audio streams of the same language"
+                , settingsToggleBlock model.subtitleHearToggle SubtitleHearToggleMsg "Prefer subtitles for the visually impaired" "Prefer the subtitle stream for the hearing impaired to other subtitle streams of the same language"
                 , row [ width (px 800), Background.color Colors.headerBackground, paddingXY 20 25 ]
                     [ Input.button [ Background.color Colors.cerulean, Font.color Colors.white, paddingXY 30 8, Font.size 14, Border.rounded 2 ]
                         { onPress = Nothing

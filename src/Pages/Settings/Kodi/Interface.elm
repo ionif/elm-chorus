@@ -15,6 +15,8 @@ import Spa.Document exposing (Document)
 import Spa.Generated.Route exposing (Route)
 import Spa.Page as Page exposing (Page)
 import Spa.Url as Url exposing (Url)
+import Widget.Material as Material
+import Widget
 
 
 page : Page Params Model Msg
@@ -61,6 +63,10 @@ type alias Model =
     , performSelected : String
     , startupDropdown : Dropdown Options
     , startupSelected : String
+    , rssToggle : Bool
+    , visualToggle : Bool
+    , videoToggle : Bool
+    , startupToggle : Bool
   }
 
 
@@ -127,6 +133,10 @@ init url =
                 |> Dropdown.id "startup"
                 |> Dropdown.optionsBy .name startupList
       , startupSelected = ""
+      , rssToggle = True
+      , visualToggle = True
+      , videoToggle = True
+      , startupToggle = True 
     }, Cmd.none )
 
 skinList : List Options
@@ -526,6 +536,30 @@ settingsDropdownBlock dropdown msg title description =
             ]
         ]
 
+settingsToggleBlock : Bool -> msg -> String -> String -> Element msg
+settingsToggleBlock isToggleActive toggleMsg title description =
+    let
+        descriptionBlock =
+            if description == "" then
+                Element.none
+
+            else
+                row []
+                    [ el [ width (px 300) ] (text "")
+                    , paragraph [ width (px 400), Font.size 12, Font.color (rgb255 142 142 142) ] [ text description ]
+                    ]
+    in
+    column [ paddingEach { top = 0, bottom = 30, left = 20, right = 20 } ]
+        [ row [ paddingEach { top = 0, bottom = 0, left = 0, right = 0 } ]
+            [ paragraph [ width (px 300), Font.size 14, Font.color (rgb255 3 3 3), Font.medium ] [ text title ]
+            , Widget.switch (Material.switch customPalette)
+                { description = ""
+                , onPress = Just toggleMsg
+                , active = isToggleActive
+                }
+            ]
+        , descriptionBlock
+        ]
 
 type Msg
     = ReplaceMe
@@ -541,11 +575,27 @@ type Msg
     | ScreensaverDropdownMsg (Dropdown.Msg Options)
     | PerformDropdownMsg (Dropdown.Msg Options)
     | StartupDropdownMsg (Dropdown.Msg Options)
+    | RssToggleMsg 
+    | VisualToggleMsg 
+    | VideoToggleMsg 
+    | StartupToggleMsg 
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
+        RssToggleMsg ->
+            ({model|rssToggle = not model.rssToggle}, Cmd.none)
+
+        VisualToggleMsg ->
+            ({model|visualToggle = not model.visualToggle}, Cmd.none)
+
+        VideoToggleMsg ->
+            ({model|videoToggle = not model.videoToggle}, Cmd.none)
+
+        StartupToggleMsg -> 
+            ({model|startupToggle = not model.startupToggle}, Cmd.none) 
+
         ReplaceMe ->
             ( model, Cmd.none )
 
@@ -824,7 +874,7 @@ view model =
                 , settingsDropdownBlock model.colorDropdown ColorDropdownMsg "Colors" "Change the colours of your selected skin."
                 , settingsDropdownBlock model.fontDropdown FontDropdownMsg "Fonts" "Choose the fonts displayed in the user interface. The font sets are configured by your skin."
                 , settingsInputBlock "Zoom" "Resize the view of the user interface."
-                , settingsToggleBlock "Show RSS news feeds" "Turn this off to remove the scrolling RSS news ticker."
+                , settingsToggleBlock model.rssToggle RssToggleMsg "Show RSS news feeds" "Turn this off to remove the scrolling RSS news ticker."
                 , settingsInputBlock "Edit" "Edit the RSS feeds."
                 , el [ Font.color (rgb255 18 178 231), Font.size 24, Font.light, paddingEach { top = 0, bottom = 30, left = 0, right = 0 } ] (text "Regional")
                 , settingsDropdownBlock model.languageDropdown LanguageDropdownMsg "Language" "Chooses the language of the user interface."
@@ -835,10 +885,10 @@ view model =
                 , el [ Font.color (rgb255 18 178 231), Font.size 24, Font.light, paddingEach { top = 0, bottom = 30, left = 0, right = 0 } ] (text "Screensaver")
                 , settingsDropdownBlock model.screensaverDropdown ScreensaverDropdownMsg "Screensaver mode" "Select the screensaver. The \"Dim\" screensaver will be forced when fullscreen video playback is paused or a dialogue box is active."
                 , settingsInputBlock "Wait time" "Set the time to wait for any activity to occur before displaying the screensaver."
-                , settingsToggleBlock "Use visualisation if playing audio" "If music is being played, the selected visualisation will be started instead of displaying the screensaver."
-                , settingsToggleBlock "Use dim if paused during video playback" "Dim the display when media is paused. Not valid for the \"Dim\" screensaver mode."
+                , settingsToggleBlock model.visualToggle VisualToggleMsg "Use visualisation if playing audio" "If music is being played, the selected visualisation will be started instead of displaying the screensaver."
+                , settingsToggleBlock model.videoToggle VideoToggleMsg "Use dim if paused during video playback" "Dim the display when media is paused. Not valid for the \"Dim\" screensaver mode."
                 , el [ Font.color (rgb255 18 178 231), Font.size 24, Font.light, paddingEach { top = 0, bottom = 30, left = 0, right = 0 } ] (text "Master lock")
-                , settingsToggleBlock "Ask for master lock code on startup" "If enabled, the master lock code is required to unlock this application on startup."
+                , settingsToggleBlock model.startupToggle StartupToggleMsg "Ask for master lock code on startup" "If enabled, the master lock code is required to unlock this application on startup."
                 , el [ Font.color (rgb255 18 178 231), Font.size 24, Font.light, paddingEach { top = 0, bottom = 30, left = 0, right = 0 } ] (text "Startup")
                 , settingsDropdownBlock model.performDropdown PerformDropdownMsg "Perform on startup" "Select an action Kodi will perform on startup."
                 , settingsDropdownBlock model.startupDropdown StartupDropdownMsg "Startup window" "Select the media window to display on startup."

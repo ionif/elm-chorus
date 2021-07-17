@@ -17,6 +17,8 @@ import Spa.Generated.Route exposing (Route)
 import Spa.Page as Page exposing (Page)
 import Spa.Url as Url exposing (Url)
 import WSDecoder exposing (SettingsObj)
+import Widget.Material as Material
+import Widget
 
 
 page : Page Params Model Msg
@@ -52,6 +54,14 @@ type alias Model =
     , pollSelected : String
     , settingsLevelDropdown : Dropdown Options
     , settingsLevelSelected : String
+    , articleToggle : Bool
+    , albumToggle : Bool
+    , playlistToggle : Bool
+    , headersToggle : Bool
+    , thumbsUpToggle : Bool
+    , deviceToggle : Bool
+    , proxyToggle : Bool
+    , nfoToggle : Bool
    }
 
 save : Model -> Shared.Model -> Shared.Model
@@ -92,6 +102,14 @@ init shared url =
                 |> Dropdown.id "settingsLevel"
                 |> Dropdown.optionsBy .name settingsLevelList
       , settingsLevelSelected = ""
+      , articleToggle = True
+      , albumToggle = True
+      , playlistToggle = True
+      , headersToggle = True
+      , thumbsUpToggle = True
+      , deviceToggle = True
+      , proxyToggle = True
+      , nfoToggle = True
      }
      , sendAction  """{"jsonrpc": "2.0", "method": "Settings.GetSettings", "params": {}, "id": 1 }"""
       )
@@ -152,6 +170,14 @@ type Msg
     | ControlDropdownMsg (Dropdown.Msg Options)
     | PollDropdownMsg (Dropdown.Msg Options)
     | SettingsLevelDropdownMsg (Dropdown.Msg Options)
+    | ArticleToggleMsg 
+    | AlbumToggleMsg
+    | PlaylistToggleMsg
+    | HeadersToggleMsg
+    | ThumbsUpToggleMsg
+    | DeviceToggleMsg 
+    | ProxyToggleMsg 
+    | NFOToggleMsg 
 
 
 
@@ -176,10 +202,60 @@ settingsDropdownBlock dropdown msg title description =
             ]
         ]
 
+settingsToggleBlock : Bool -> msg -> String -> String -> Element msg
+settingsToggleBlock isToggleActive toggleMsg title description =
+    let
+        descriptionBlock =
+            if description == "" then
+                Element.none
+
+            else
+                row []
+                    [ el [ width (px 300) ] (text "")
+                    , paragraph [ width (px 400), Font.size 12, Font.color (rgb255 142 142 142) ] [ text description ]
+                    ]
+    in
+    column [ paddingEach { top = 0, bottom = 30, left = 20, right = 20 } ]
+        [ row [ paddingEach { top = 0, bottom = 0, left = 0, right = 0 } ]
+            [ paragraph [ width (px 300), Font.size 14, Font.color (rgb255 3 3 3), Font.medium ] [ text title ]
+            , Widget.switch (Material.switch customPalette)
+                { description = ""
+                , onPress = Just toggleMsg
+                , active = isToggleActive
+                }
+            ]
+        , descriptionBlock
+        ]
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
+
+        ArticleToggleMsg ->
+            ({model|articleToggle = not model.articleToggle}, Cmd.none)
+
+        AlbumToggleMsg -> 
+            ( {model | albumToggle = not model.albumToggle} , Cmd.none)
+
+        PlaylistToggleMsg -> 
+            ( {model | playlistToggle = not model.playlistToggle}, Cmd.none)
+
+        HeadersToggleMsg -> 
+            ( {model | headersToggle = not model.headersToggle}, Cmd.none)
+
+        ThumbsUpToggleMsg -> 
+            ( {model | thumbsUpToggle = not model.thumbsUpToggle}, Cmd.none)
+
+        DeviceToggleMsg -> 
+            ( {model | deviceToggle = not model.deviceToggle}, Cmd.none)
+
+        ProxyToggleMsg -> 
+            ( {model | proxyToggle = not model.proxyToggle}, Cmd.none)
+
+        NFOToggleMsg -> 
+            ( {model | nfoToggle = not model.nfoToggle}, Cmd.none)
+
+
         ReplaceMe ->
             ( model, Cmd.none )
 
@@ -311,20 +387,20 @@ view model =
                 , settingsDropdownBlock model.defaultPlayerDropdown DefaultPlayerDropdownMsg "Default Player" "Which player to start with"
                 , settingsDropdownBlock  model.controlDropdown ControlDropdownMsg "Keyboard controls" "In Chorus, will your keyboard control Kodi, the browser or both."
                 , el [ Font.color (rgb255 18 178 231), Font.size 24, Font.light, paddingEach { top = 0, bottom = 30, left = 0, right = 0 } ] (text "List options")
-                , settingsToggleBlock "Ignore article" "Ignore articles (terms such as 'The' and 'A') when sorting lists"
-                , settingsToggleBlock "Album artists only" "When listing artists should we only see artists with albums or all artists found. Warning: turning this off can impact performance with large libraries"
-                , settingsToggleBlock "Focus playlist on playing" "Automatically scroll the playlist to the current playing item. This happens whenever the playing item is changed"
+                , settingsToggleBlock model.articleToggle ArticleToggleMsg "Ignore article" "Ignore articles (terms such as 'The' and 'A') when sorting lists"
+                , settingsToggleBlock model.albumToggle AlbumToggleMsg "Album artists only" "When listing artists should we only see artists with albums or all artists found. Warning: turning this off can impact performance with large libraries"
+                , settingsToggleBlock  model.playlistToggle PlaylistToggleMsg "Focus playlist on playing" "Automatically scroll the playlist to the current playing item. This happens whenever the playing item is changed"
                 , el [ Font.color (rgb255 18 178 231), Font.size 24, Font.light, paddingEach { top = 0, bottom = 30, left = 0, right = 0 } ] (text "Appearance")
-                , settingsToggleBlock "Vibrant headers" "Use colourful headers for media pages"
-                , settingsToggleBlock "Disable Thumbs Up" "Remove the thumbs up button from media. Note: you may also want to remove the menu item from the Main Nav"
-                , settingsToggleBlock "Show device name" "Show the Kodi device name in the header of Chorus"
+                , settingsToggleBlock model.headersToggle HeadersToggleMsg "Vibrant headers" "Use colourful headers for media pages"
+                , settingsToggleBlock model.thumbsUpToggle ThumbsUpToggleMsg "Disable Thumbs Up" "Remove the thumbs up button from media. Note: you may also want to remove the menu item from the Main Nav"
+                , settingsToggleBlock model.deviceToggle DeviceToggleMsg "Show device name" "Show the Kodi device name in the header of Chorus"
                 , el [ Font.color (rgb255 18 178 231), Font.size 24, Font.light, paddingEach { top = 0, bottom = 30, left = 0, right = 0 } ] (text "Advanced options")
                 , settingsInputBlock "Websockets port" "9090 is the default"
                 , settingsInputBlock "Websockets host" "The hostname used for websockets connection. Set to 'auto' to use the current hostname."
                 , settingsDropdownBlock model.pollDropdown PollDropdownMsg "Poll interval" "How often do I poll for updates from Kodi (Only applies when websocket inactive)"
                 , settingsDropdownBlock model.settingsLevelDropdown SettingsLevelDropdownMsg "Kodi settings level" "Advanced settings level is recommmended for those who know what they are doing."
-                , settingsToggleBlock "Reverse proxy support" "Enable support of reverse proxying."
-                , settingsToggleBlock "RefreshIgnore NFO" "Ignore local NFO files when manually refreshing media."
+                , settingsToggleBlock model.proxyToggle ProxyToggleMsg "Reverse proxy support" "Enable support of reverse proxying."
+                , settingsToggleBlock model.nfoToggle NFOToggleMsg "RefreshIgnore NFO" "Ignore local NFO files when manually refreshing media."
                 , el [ Font.color (rgb255 18 178 231), Font.size 24, Font.light, paddingEach { top = 0, bottom = 30, left = 0, right = 0 } ] (text "API Keys")
                 , settingsInputBlock "The Movie DB" "Set your personal API key"
                 , settingsInputBlock "FanartTV" "Set your personal API key"
